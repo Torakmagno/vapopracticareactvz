@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{useEffect, useState} from 'react';
+import Producto from './Components/Producto';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const axios =require('axios');
+
+const App = ()=>{
+
+  const [liquidos,setLiquidos]=useState(null);
+
+  useEffect(() => {
+
+    axios.get('http://127.0.0.1:8080/api/liquidos')
+    .then(response => {
+      const liquidos = response.data;
+      setLiquidos(liquidos);
+      console.log(liquidos);
+    });
+},[])
+
+
+  return( 
+    <>
+      {!liquidos ?'loading': liquidos.map(producto => (
+        <Producto key={producto.id} {...producto} />    
+      ))}
+    </>
+  )
 }
 
 export default App;
+
