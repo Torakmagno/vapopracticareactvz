@@ -1,31 +1,37 @@
-import React,{useEffect, useState} from 'react';
-import Producto from './Components/Producto';
+import React, { useEffect, useState } from 'react';
+import ProductListPage from './Pages/ProductList';
+import ProductInfo from './Pages/ProductInfo';
+import Cart from './Pages/Cart';
+import Nav from './Components/Nav';
+import 'font-awesome/css/font-awesome.min.css';
 
-const axios =require('axios');
+import { UserProvider, defaultUser } from "./Context/CarritoContext";
 
-const App = ()=>{
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-  const [liquidos,setLiquidos]=useState(null);
+const axios = require('axios');
 
-  useEffect(() => {
+// https://javascript.plainenglish.io/authentication-in-react-caf2abfa0494
 
-    axios.get('http://127.0.0.1:8080/api/liquidos')
-    .then(response => {
-      const liquidos = response.data;
-      setLiquidos(liquidos);
-      console.log(liquidos);
-    });
-},[])
+const App = ({ children }) => {
+	
+	const [carrito, setCarrito] = useState([]);
+	
+	const addProduct = (id) => setCarrito([...carrito, id]); 
 
-
-  return( 
-    <>
-      {!liquidos ?'loading': liquidos.map(producto => (
-        <Producto key={producto.id} {...producto} />    
-      ))}
-    </>
+  return(
+    <BrowserRouter>
+     <UserProvider value={{carrito, addProduct}}>
+     <Nav></Nav>
+	    <Routes>
+	        <Route path="/" element={<ProductListPage/>} />
+	        <Route path="/producto/:id" element={<ProductInfo />} />
+	        <Route path="/carrito" element={<Cart />} />
+	    </Routes>
+    </UserProvider>
+  </BrowserRouter>
   )
+  
 }
 
 export default App;
-
